@@ -1,4 +1,3 @@
--- Auto-generated from materials_table_normalized_filled.csv
 DROP TABLE IF EXISTS materials;
 CREATE TABLE IF NOT EXISTS materials (
   "id" TEXT PRIMARY KEY,
