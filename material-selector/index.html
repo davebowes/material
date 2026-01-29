@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FASTSIGNS Material Selector</title>
+<style>
+:root{
+  --fs-red:#c8102e;
+  --fs-bg:#f3f4f6;
+  --fs-border:#e5e7eb;
+  --fs-muted:#6b7280;
+  --fs-ink:#111827;
+  --fs-good:#16a34a;
+  --fs-better:#2563eb;
+  --fs-best:#7c3aed;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--fs-bg);padding:18px;color:var(--fs-ink)}
+.wrap{max-width:1200px;margin:auto;background:#fff;border-radius:18px;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+.header{display:flex;gap:14px;align-items:center}
+.brand{display:flex;flex-direction:column;gap:2px}
+h1{color:var(--fs-red);margin:0;font-size:1.35rem;letter-spacing:.2px}
+.sub{color:var(--fs-muted);margin:0;font-size:.95rem}
+.logo{height:38px;width:auto;display:block}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--fs-border);border-radius:999px;padding:6px 10px;font-size:.85rem;color:var(--fs-muted)}
+hr{border:none;border-top:1px solid var(--fs-border);margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.cardish{border:1px solid var(--fs-border);border-radius:14px;padding:12px;background:#fff}
+label{font-weight:800;font-size:.9rem;display:block;margin-bottom:6px}
+select,input,button,textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--fs-border);border-radius:10px;font-size:.95rem;background:#fff
+}
+input[type="number"]{appearance:textfield}
+small.help{color:var(--fs-muted);display:block;margin-top:6px;line-height:1.25}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row > *{flex:1}
+button.primary{
+  background:var(--fs-red);color:#fff;border:none;font-weight:900;cursor:pointer
+}
+button.primary:hover{filter:brightness(.95)}
+button.ghost{background:#fff;color:var(--fs-ink);border:1px solid var(--fs-border);font-weight:800;cursor:pointer}
+details{border:1px dashed var(--fs-border);border-radius:14px;padding:10px 12px;background:#fafafa}
+summary{cursor:pointer;font-weight:900;color:var(--fs-ink);list-style:none}
+summary::-webkit-details-marker{display:none}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-weight:900;font-size:.85rem}
+.badge.good{background:rgba(22,163,74,.12);color:var(--fs-good);border:1px solid rgba(22,163,74,.25)}
+.badge.better{background:rgba(37,99,235,.12);color:var(--fs-better);border:1px solid rgba(37,99,235,.25)}
+.badge.best{background:rgba(124,58,237,.12);color:var(--fs-best);border:1px solid rgba(124,58,237,.25)}
+.badge.overall{background:rgba(200,16,46,.10);color:var(--fs-red);border:1px solid rgba(200,16,46,.25)}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.kpi span{font-size:.85rem;color:var(--fs-muted);border:1px solid var(--fs-border);border-radius:999px;padding:6px 10px;background:#fff}
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px}
+.resultsInner{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px}
+.resultDetails{border:1px solid var(--fs-border);border-radius:16px;padding:10px 12px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.04)}
+.resultDetails summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px}
+.resultDetails summary .sumTitle{font-weight:950}
+.resultDetails summary .sumHint{color:var(--fs-muted);font-weight:800;font-size:.85rem}
+.resultDetails[open] summary{margin-bottom:6px}
+.resultCard{border:1px solid var(--fs-border);border-radius:16px;padding:14px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.05)}
+.resultTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.resultName{font-weight:1000;font-size:1.05rem;margin:0}
+.muted{color:var(--fs-muted)}
+.sectionTitle{font-weight:950;margin:12px 0 6px 0}
+ul{margin:6px 0 0 18px}
+li{margin:3px 0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.warn{color:#b45309}
+.goodtxt{color:var(--fs-good)}
+.smallgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:520px){ .smallgrid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <img class="logo" src="fastsigns-logo.png" alt="FASTSIGNS" />
+      <div class="brand">
+        <h1>FASTSIGNS Material Selector</h1>
+        <p class="sub">Answer two required questions to get <b>Good / Better / Best</b> plus an <b>Overall Best</b>.</p>
+      </div>
+      <div style="margin-left:auto">
+        <div class="pill" id="status">Loading materials…</div>
+      </div>
+    </div>
+
+    <hr/>
+
+    <div class="grid">
+      <div class="cardish">
+        <label for="signType">Required: Sign type</label>
+        <select id="signType">
+          <option value="">Select…</option>
+          <option value="flat_panel">Flat panel / rigid sign</option>
+          <option value="banner">Banner</option>
+          <option value="window_graphics">Window graphics</option>
+          <option value="wall_graphics">Wall graphics</option>
+          <option value="floor_graphics">Floor graphics</option>
+          <option value="vehicle_graphics">Vehicle graphics</option>
+          <option value="decal_label">Decal / label</option>
+        </select>
+        <small class="help">This is the biggest driver of correct recommendations.</small>
+      </div>
+
+      <div class="cardish">
+        <label for="location">Required: Location</label>
+        <select id="location">
+          <option value="">Select…</option>
+          <option value="indoor">Indoor</option>
+          <option value="outdoor">Outdoor</option>
+        </select>
+        <small class="help">Outdoor results automatically prioritize UV/water durability and longer-life substrates.</small>
+      </div>
+
+      <div class="cardish">
+        <label>Recommended (not required): Size</label>
+        <div class="smallgrid">
+          <div>
+            <input id="wIn" type="number" min="0" step="0.01" placeholder="Width (in)" />
+          </div>
+          <div>
+            <input id="hIn" type="number" min="0" step="0.01" placeholder="Height (in)" />
+          </div>
+          <div>
+            <label style="display:flex;gap:10px;align-items:center;font-weight:900;margin:0">
+              <input id="doubleSided" type="checkbox" style="width:auto;transform:translateY(1px)" />
+              Double-sided required
+            </label>
+          </div>
+          <div>
+            <input id="laminate" type="checkbox" style="width:auto;transform:translateY(2px)" />
+            <label for="laminate" style="display:inline;font-weight:900;margin-left:6px">Include laminate (if applicable)</label>
+          </div>
+        </div>
+        <small class="help">Add size for panels & seams guidance. If blank, you’ll still get correct material picks.</small>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <details>
+        <summary>Optional refinements (collapse/expand)</summary>
+        <div class="grid" style="margin-top:12px">
+          <div class="cardish">
+            <label for="duration">Duration</label>
+            <select id="duration">
+              <option value="">No preference</option>
+              <option value="temporary">Temporary / promotional</option>
+              <option value="permanent">Permanent / long-term</option>
+            </select>
+            <small class="help">Helps reduce “ties” by aligning expected lifespan.</small>
+          </div>
+
+          <div class="cardish">
+            <label for="surface">Surface (for films/graphics)</label>
+            <select id="surface">
+              <option value="">No preference</option>
+              <option value="smooth">Smooth (glass, smooth paint, metal)</option>
+              <option value="textured">Textured (orange peel, brick, block)</option>
+              <option value="low_energy">Low-energy plastic (PP/PE, some powder coats)</option>
+            </select>
+            <small class="help">If unsure, leave blank. It won’t block results.</small>
+          </div>
+
+          <div class="cardish">
+            <label for="windExposure">Wind exposure</label>
+            <select id="windExposure">
+              <option value="">Unknown</option>
+              <option value="low">Low</option>
+              <option value="med">Medium</option>
+              <option value="high">High</option>
+            </select>
+            <small class="help">High wind will penalize flexible materials and unframed large panels.</small>
+          </div>
+
+          <div class="cardish">
+            <label for="priority">Overall Best priority</label>
+            <select id="priority">
+              <option value="balanced">Balanced (default)</option>
+              <option value="durability">Max durability</option>
+              <option value="easy_install">Easiest install</option>
+              <option value="clean_removal">Clean removability</option>
+              <option value="premium_finish">Premium finish</option>
+              <option value="lowest_cost">Lowest cost</option>
+            </select>
+            <small class="help">If everything ties, Overall Best breaks ties by <b>lower expense</b>.</small>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <button class="primary" id="run">Recommend Materials</button>
+      <button class="ghost" id="showAll">Show all materials</button>
+    </div>
+
+    <div id="messages" style="margin-top:12px"></div>
+    <div id="results" class="results" style="display:none"></div>
+
+    <div class="muted" style="margin-top:16px;font-size:.9rem">
+      Tip: Start with required fields only. Add optional refinements only if your results look too broad.
+    </div>
+  </div>
+
+<script>
+let MATERIALS = [];
+
+const $ = (id) => document.getElementById(id);
+
+function asBool(v){
+  if (v === true || v === false) return v;
+  const s = (v ?? "").toString().trim().toLowerCase();
+  if (["true","1","yes","y"].includes(s)) return true;
+  if (["false","0","no","n"].includes(s)) return false;
+  return null;
+}
+function parseJsonArray(v){
+  if (v == null) return [];
+  if (Array.isArray(v)) return v;
+  const s = (""+v).trim();
+  if (!s || s === "[]") return [];
+  try { return JSON.parse(s); } catch { 
+    // handle old single-quote list strings
+    try { return JSON.parse(s.replace(/'/g,'"')); } catch { return [s]; }
+  }
+}
+function expenseDollarSigns(n){
+  if (n == null || isNaN(n)) return "—";
+  const v = Number(n);
+  if (v <= 2) return "$";
+  if (v <= 4) return "$$";
+  if (v <= 6) return "$$$";
+  if (v <= 9) return "$$$$";
+  return "$$$$$";
+}
+
+function sqftFromInches(wIn, hIn){
+  if (!wIn || !hIn) return null;
+  return (Number(wIn) * Number(hIn)) / 144;
+}
+function panelsAndSeams(wIn, hIn, mat){
+  const w = Number(wIn);
+  const h = Number(hIn);
+  if (!w || !h) return {panels:null, seams:null, cols:null, rows:null};
+
+  // Prefer explicit sheet/roll constraints if present
+  const maxW = Number(mat.max_w_in ?? mat.max_width_in ?? mat.roll_width);
+  const maxH = Number(mat.max_h_in ?? mat.max_height_in);
+
+  if (!maxW || isNaN(maxW)) return {panels:null, seams:null, cols:null, rows:null};
+
+  // Panels can be rotated to fit (48x96 is same as 96x48), and customer sizes can also be rotated.
+  // We compute the best (fewest panels; if tie, fewest seams) across all valid orientations.
+  const jobOrients = [
+    {w, h},
+    {w: h, h: w},
+  ].filter((o, i, a) => a.findIndex(x => x.w === o.w && x.h === o.h) === i);
+
+  const sheetOrients = (!maxH || isNaN(maxH))
+    ? [{w: maxW, h: null}] // roll: fixed width; length effectively unlimited
+    : [
+        {w: maxW, h: maxH},
+        {w: maxH, h: maxW},
+      ].filter((o, i, a) => a.findIndex(x => x.w === o.w && x.h === o.h) === i);
+
+  let best = null;
+
+  for (const jo of jobOrients){
+    for (const so of sheetOrients){
+      // If it fits in one panel either way, it's one panel.
+      const fits = so.h
+        ? (jo.w <= so.w && jo.h <= so.h)
+        : (jo.w <= so.w) || (jo.h <= so.w); // roll: either dimension can run across width when rotated
+
+      let cols, rows;
+      if (fits){
+        cols = 1;
+        rows = 1;
+      } else {
+        cols = Math.max(1, Math.ceil(jo.w / so.w));
+        // Many roll materials are effectively "infinite" in length; if no max height, assume 1 row
+        rows = (!so.h) ? 1 : Math.max(1, Math.ceil(jo.h / so.h));
+      }
+
+      const panels = cols * rows;
+      const verticalSeams = Math.max(0, cols - 1) * rows;
+      const horizontalSeams = Math.max(0, rows - 1) * cols;
+      const seams = verticalSeams + horizontalSeams;
+
+      const cand = {panels, seams, cols, rows};
+      if (!best) best = cand;
+      else if (cand.panels < best.panels) best = cand;
+      else if (cand.panels === best.panels && cand.seams < best.seams) best = cand;
+    }
+  }
+
+  return best ?? {panels:null, seams:null, cols:null, rows:null};
+}
+
+// --- HARD RULES (must pass) ---
+function hardFilter(m, q){
+  const reasons = [];
+  const signTypes = parseJsonArray(m.sign_types);
+  if (q.signType && signTypes.length && !signTypes.includes(q.signType)){
+    reasons.push(`Not intended for sign type: ${q.signType}`);
+  }
+
+  const indoorOK = asBool(m.indoor_use);
+  const outdoorOK = asBool(m.outdoor_use);
+
+  if (q.location === "indoor" && indoorOK === false) reasons.push("Indoor use not recommended");
+  if (q.location === "outdoor" && outdoorOK === false) reasons.push("Outdoor use not recommended");
+
+  if (q.duration === "temporary"){
+    const tmp = asBool(m.temporary);
+    if (tmp === false) reasons.push("Not suited for temporary use");
+  }
+  if (q.duration === "permanent"){
+    const perm = asBool(m.permanent);
+    if (perm === false) reasons.push("Not suited for permanent use");
+  }
+
+  if (q.doubleSided){
+    const ds = asBool(m.double_sided_supported ?? m.double_sided);
+    if (ds === false) reasons.push("Does not support double-sided");
+  }
+
+  if (q.location === "outdoor"){
+    const lamReq = asBool(m.lamination_required_outdoors);
+    if (lamReq === true && !q.includeLaminate){
+      // don't disqualify; warn and penalize
+      reasons.push("Outdoor use typically requires laminate");
+    }
+  }
+
+  // surface refinement (optional) - only lightly applied
+  if (q.surface && (q.signType.includes("graphics") || q.signType === "decal_label")){
+    const subs = parseJsonArray(m.recommended_substrates).map(x=>(""+x).toLowerCase());
+    if (subs.length){
+      if (q.surface === "smooth" && !subs.some(x=>x.includes("smooth") || x.includes("glass") || x.includes("metal")))
+        reasons.push("Not ideal for smooth surfaces");
+      if (q.surface === "textured" && !subs.some(x=>x.includes("texture") || x.includes("brick") || x.includes("block")))
+        reasons.push("Not ideal for textured surfaces");
+      if (q.surface === "low_energy" && !subs.some(x=>x.includes("low") || x.includes("pp") || x.includes("pe")))
+        reasons.push("Not ideal for low-energy plastics");
+    }
+  }
+
+  // Disqualify only on hard mismatches; keep warning-style reasons as soft penalties later
+  const disqualifying = reasons.filter(r =>
+      r.startsWith("Not intended") ||
+      r.includes("not recommended") ||
+      r.includes("Not suited") ||
+      r.includes("Does not support") ||
+      r.includes("Not compatible")
+  );
+
+  return { pass: disqualifying.length === 0, reasons, disqualifying };
+}
+
+// --- SCORING (soft ranking) ---
+// absolute performance: higher is better EXCEPT risk/sensitivity fields where higher is worse.
+function scoreMaterial(m, q){
+  const perf = (v) => Number(v ?? 0);
+  const bad  = (v) => Number(v ?? 0); // higher is worse
+
+  const uv = perf(m.uv_resistance_0_10 ?? 0);
+  const water = perf(m.water_resistance_0_10 ?? 0);
+  const chem = perf(m.chemical_resistance_0_10 ?? 0);
+  const rigid = perf(m.rigidity_0_10 ?? 0);
+  const impact = perf(m.impact_resistance_0_10 ?? 0);
+
+  const warpRisk = bad(m.warp_risk_0_10 ?? 0);
+  const humidSens = bad(m.humidity_sensitivity_0_10 ?? 0);
+
+  const removal = perf(m.removal_cleanliness_0_10 ?? 0);
+  const conform = perf(m.conformability_0_10 ?? 0);
+
+  // Install difficulty: lower is better
+  const skill = Number(m.installer_skill_level_1_5 ?? 3);
+  const installEase = 10 - Math.round(((skill-1) / 4) * 10);
+
+  // Wind: if high wind, reward rigidity/strength
+  const wind = perf(m.wind_rating_0_10 ?? (Number(m.wind_rating_0_5 ?? 0) * 2));
+
+  // Base performance score, tuned by location
+  let performanceScore = (
+    (uv * 1.2) +
+    (water * (q.location === "outdoor" ? 1.4 : 0.6)) +
+    (chem * 0.6) +
+    (rigid * 0.9) +
+    (impact * 0.7) +
+    (conform * (q.signType.includes("graphics") ? 1.0 : 0.4)) +
+    (removal * (q.priority === "clean_removal" ? 1.2 : 0.5)) +
+    (installEase * (q.priority === "easy_install" ? 1.2 : 0.4)) +
+    (wind * (q.windExposure === "high" ? 1.2 : q.windExposure === "med" ? 0.6 : 0.2))
+  );
+
+  // Risk penalties
+  performanceScore -= (warpRisk * 0.9) + (humidSens * 0.6);
+
+  // Premium finish bump (if acrylic/ACM/aluminum or finish options)
+  const name = (m.name ?? "").toString().toLowerCase();
+  const finish = parseJsonArray(m.surface_finish_options).join(" ").toLowerCase();
+  const premiumHint = (name.includes("acrylic") || name.includes("acm") || name.includes("dibond") || name.includes("aluminum") || finish.includes("polish"));
+  if (q.priority === "premium_finish" && premiumHint) performanceScore += 3.5;
+
+  // Clamp
+  performanceScore = Math.max(0, Math.min(100, performanceScore));
+
+  // Cost basis (per sqft) — we show expense as $ signs instead of an estimated total.
+  const matCost = Number(m.material_cost_sqft ?? 0);
+  const printCost = Number(m.print_cost_sqft ?? 0);
+  const lamCost = q.includeLaminate ? Number(m.laminate_cost_sqft ?? 0) : 0;
+  const unitCostSqft = (matCost || printCost || lamCost) ? (matCost + printCost + lamCost) : null;
+
+  // Value score (higher better): performance per dollar-ish (when cost exists)
+  let valueScore = performanceScore;
+  if (unitCostSqft != null && unitCostSqft > 0){
+    valueScore = performanceScore / Math.log10(unitCostSqft + 10);
+  }
+
+  // Warnings from hardFilter (non-disqualifying)
+  const hf = hardFilter(m, q);
+  const warningCount = hf.reasons.length - hf.disqualifying.length;
+
+  return { performanceScore, valueScore, unitCostSqft, installEase, warningCount, reasons: hf.reasons };
+}
+
+function pickDistinct(existing, candidates, keyFn){
+  // pick highest keyFn among candidates that isn't already used by id
+  const used = new Set(existing.map(x=>x.material.id));
+  const sorted = [...candidates].sort((a,b)=>keyFn(b)-keyFn(a));
+  for (const s of sorted){
+    if (!used.has(s.material.id)) return s;
+  }
+  return null;
+}
+
+function buildTiers(scored){
+  // candidates already hard-pass and scored
+  // Good/Better/Best are a simple ladder; Overall Best is computed from the full eligible set.
+  const clean = scored.filter(s=>s.warningCount <= 2);
+  const pool = clean.length ? clean : scored;
+
+  // Good: lean economical when cost data exists; otherwise highest value.
+  const hasCost = pool.some(s=>s.unitCostSqft != null);
+  const good = hasCost
+    ? [...pool].sort((a,b)=>(a.unitCostSqft??1e18)-(b.unitCostSqft??1e18))[0]
+    : [...pool].sort((a,b)=>b.valueScore-a.valueScore)[0];
+
+  const better = pickDistinct([good], pool, s=>s.valueScore);
+  const best = pickDistinct([good, better].filter(Boolean), pool, s=>s.performanceScore);
+
+  function overallKey(s){
+    const p = s.performanceScore;
+    const v = s.valueScore;
+    const e = s.installEase;
+    const r = Number(s.material.removal_cleanliness_0_10 ?? 0);
+    switch(($("priority").value || "balanced")){
+      case "durability": return p;
+      case "easy_install": return e*8 + p*0.2;
+      case "clean_removal": return r*8 + p*0.2;
+      case "premium_finish": return p; // premium bump already baked into scoreMaterial
+      case "lowest_cost": return (s.unitCostSqft == null) ? v : (1000000 - s.unitCostSqft);
+      default: return (p*0.7 + v*0.3);
+    }
+  }
+
+  // Overall best: consider ALL eligible candidates (not just Good/Better/Best)
+  const overallSorted = [...pool].sort((a,b)=>{
+    const ka = overallKey(a), kb = overallKey(b);
+    if (kb !== ka) return kb-ka;
+    const ca = a.unitCostSqft ?? 1e18, cb = b.unitCostSqft ?? 1e18;
+    return ca-cb; // lower $/sqft wins ties
+  });
+  const overall = overallSorted[0] || null;
+
+  return { good, better, best, overall };
+}
+
+function prosCons(m, s, q){
+  const pros=[], cons=[];
+  const p = s.performanceScore;
+
+  const uv = Number(m.uv_resistance_0_10 ?? 0);
+  const water = Number(m.water_resistance_0_10 ?? 0);
+  const rigid = Number(m.rigidity_0_10 ?? 0);
+  const impact = Number(m.impact_resistance_0_10 ?? 0);
+  const removal = Number(m.removal_cleanliness_0_10 ?? 0);
+  const conform = Number(m.conformability_0_10 ?? 0);
+  const warp = Number(m.warp_risk_0_10 ?? 0);
+
+  if (q.location==="outdoor" && (uv>=7 || water>=7)) pros.push("Strong outdoor durability (UV/water).");
+  if (rigid>=7) pros.push("Very rigid — resists oil-canning and flex.");
+  if (impact>=7) pros.push("Good impact resistance.");
+  if ((q.signType.includes("graphics") || q.signType==="decal_label") && conform>=7) pros.push("High conformability for curves/contours.");
+  if (q.priority==="clean_removal" && removal>=7) pros.push("Clean removability compared to most options.");
+
+  if (warp>=7) cons.push("Higher warp risk if not properly supported.");
+  if (q.location==="outdoor" && (uv<=4 || water<=4)) cons.push("Not ideal for harsh outdoor exposure.");
+  if ((q.signType.includes("graphics") || q.signType==="decal_label") && conform<=4) cons.push("Limited conformability; better for flat surfaces.");
+  if (s.warningCount>0) cons.push("Some scenario warnings apply (see ‘Why this fit’).");
+
+  if (!pros.length) pros.push("Meets core requirements for the selected scenario.");
+  if (!cons.length) cons.push("No major drawbacks identified for this scenario.");
+
+  return { pros, cons };
+}
+
+function thicknessInsight(m, q){
+  const t = (m.thickness ?? "").toString().trim();
+  if (!t) return null;
+
+  // Try to pull a mm value from strings like "6mm", "3 mm", "0.060in"
+  let mm = null;
+  const mmMatch = t.match(/([0-9]+(?:\.[0-9]+)?)\s*mm/i);
+  if (mmMatch) mm = Number(mmMatch[1]);
+  const inMatch = (!mmMatch) ? t.match(/([0-9]+(?:\.[0-9]+)?)\s*in/i) : null;
+  if (inMatch) mm = Number(inMatch[1]) * 25.4;
+
+  const isRigid = ((m.format ?? "").toString().toLowerCase().includes("rigid")) || (parseJsonArray(m.sign_types).includes("flat_panel"));
+  if (!isRigid) return `Thickness: ${t}`;
+
+  const w = Number(q.wIn||0), h = Number(q.hIn||0);
+  const largerPanel = (w && h) ? ((w*h) >= (24*36)) : false;
+  const windy = (q.windExposure === "high");
+
+  let note = "";
+  if (mm != null){
+    if (mm >= 6) note = "Higher thickness typically means a stiffer panel—helpful for larger freestanding/unframed signs.";
+    else if (mm <= 3) note = "Thinner panels can flex more; for large freestanding/unframed signs, consider a thicker/stiffer option.";
+  }
+  if ((largerPanel || windy) && q.signType === "flat_panel"){
+    note = note || "Panel stiffness matters more for large freestanding/unframed signs; wall-mounted installs are generally more forgiving.";
+  }
+  if (q.signType === "flat_panel" && q.location === "indoor" && note){
+    note += " For indoor wall-mounts, thickness typically matters less than finish and mounting method.";
+  }
+
+  return note ? `Thickness: ${t} — ${note}` : `Thickness: ${t}`;
+}
+
+function renderTier(label, badgeClass, scoredObj, isOverall=false){
+  const m = scoredObj.material;
+  const q = getQuery();
+  const uc = parseJsonArray(m.use_cases);
+  const im = parseJsonArray(m.install_methods);
+  const lt = parseJsonArray(m.laminate_types);
+
+  const sqft = sqftFromInches(q.wIn, q.hIn);
+  const ps = panelsAndSeams(q.wIn, q.hIn, m);
+
+  const pc = prosCons(m, scoredObj, q);
+
+  const reasonLines = scoredObj.reasons || [];
+  const why = reasonLines.length ? reasonLines : ["Matches required sign type and location."];
+
+  const title = isOverall ? "Overall Best" : label;
+  const badge = isOverall ? `<span class="badge overall">Overall Best</span>` : `<span class="badge ${badgeClass}">${label}</span>`;
+
+  const expenseLine = (scoredObj.unitCostSqft != null)
+    ? `<span><b>Expense:</b> ${expenseDollarSigns(scoredObj.unitCostSqft)} <span class="muted">(~$${scoredObj.unitCostSqft.toFixed(2)}/sqft materials+print${q.includeLaminate ? "+lam" : ""})</span></span>`
+    : `<span class="muted">Expense: —</span>`;
+
+  const panelLine = (ps.panels != null)
+    ? `<span><b>Panels:</b> ${ps.panels} <span class="muted">(${ps.cols} wide × ${ps.rows} high)</span> &nbsp; <b>Seams:</b> ${ps.seams}</span>`
+    : `<span class="muted">Add width + height (in) to calculate panels/seams.</span>`;
+
+  const thicknessLine = thicknessInsight(m, q);
+
+  return `
+    <div class="resultCard">
+      <div class="resultTop">
+        <div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            ${badge}
+            <div class="muted mono">${m.id || ""}</div>
+          </div>
+          <p class="resultName">${m.name || "Unnamed material"}</p>
+          <div class="kpi">
+            <span><b>Performance:</b> ${Math.round(scoredObj.performanceScore)}</span>
+            <span><b>Value:</b> ${Math.round(scoredObj.valueScore)}</span>
+            <span><b>Install ease:</b> ${Math.round(scoredObj.installEase)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px" class="smallgrid">
+        <div>${expenseLine}</div>
+        <div>${panelLine}</div>
+      </div>
+
+      ${thicknessLine ? `<div class="muted" style="margin-top:10px;line-height:1.35">${thicknessLine}</div>` : ""}
+
+      <div class="sectionTitle">Use cases</div>
+      <ul>${uc.slice(0,10).map(x=>`<li>${x}</li>`).join("") || "<li class='muted'>—</li>"}</ul>
+
+      <div class="sectionTitle">Installation notes</div>
+      <div class="muted" style="line-height:1.35">${(m.notes||"—")}</div>
+      ${im.length ? `<div class="muted" style="margin-top:6px"><b>Methods:</b> ${im.join(", ")}</div>` : "" }
+      ${lt.length ? `<div class="muted" style="margin-top:6px"><b>Laminate types:</b> ${lt.join(", ")}</div>` : "" }
+
+      <div class="sectionTitle">Pros</div>
+      <ul>${pc.pros.map(x=>`<li class="goodtxt">${x}</li>`).join("")}</ul>
+
+      <div class="sectionTitle">Cons</div>
+      <ul>${pc.cons.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+      <div class="sectionTitle">Why this fit</div>
+      <ul>${why.slice(0,8).map(r=>`<li>${r.includes("requires laminate") ? `<span class="warn">${r}</span>` : r}</li>`).join("")}</ul>
+    </div>
+  `;
+}
+
+function getQuery(){
+  return {
+    signType: $("signType").value,
+    location: $("location").value,
+    wIn: $("wIn").value,
+    hIn: $("hIn").value,
+    includeLaminate: $("laminate").checked,
+    duration: $("duration").value,
+    surface: $("surface").value,
+    windExposure: $("windExposure").value,
+    doubleSided: $("doubleSided").checked,
+    priority: $("priority").value || "balanced"
+  };
+}
+
+function msg(html){
+  $("messages").innerHTML = html;
+}
+
+function runRecommendations(showAll=false){
+  const q = getQuery();
+  const requiredMissing = [];
+  if (!showAll){
+    if (!q.signType) requiredMissing.push("Sign type");
+    if (!q.location) requiredMissing.push("Location");
+  }
+  if (requiredMissing.length){
+    msg(`<div class="cardish"><b>Missing required:</b> ${requiredMissing.join(", ")}.</div>`);
+    $("results").style.display = "none";
+    return;
+  }
+
+  const candidates = [];
+  const excluded = [];
+  for (const m of MATERIALS){
+    const hf = hardFilter(m, q);
+    if (showAll || hf.pass){
+      const s = scoreMaterial(m, q);
+      candidates.push({ material: m, ...s });
+    } else {
+      excluded.push({ material: m, why: hf.disqualifying });
+    }
+  }
+
+  if (!candidates.length){
+    msg(`<div class="cardish"><b>No eligible materials found.</b><div class="muted" style="margin-top:6px">Try removing optional refinements, or choose a different sign type.</div></div>`);
+    $("results").style.display = "none";
+    return;
+  }
+
+  // Build tiers from eligible candidates
+  const tiers = showAll
+    ? { good: null, better: null, best: null, overall: null }
+    : buildTiers(candidates);
+
+  let html = "";
+
+  if (!showAll){
+    html += `<div class="cardish">
+      <div class="row">
+        <div><b>Overall Best:</b> ${tiers.overall ? tiers.overall.material.name : "—"}</div>
+        <div class="muted">Eligible materials: <b>${candidates.length}</b></div>
+      </div>
+      ${tiers.overall && tiers.overall.warningCount ? `<div class="muted" style="margin-top:6px"><span class="warn">Note:</span> Some warnings applied. See “Why this fit”.</div>` : ""}
+    </div>`;
+  } else {
+    html += `<div class="cardish"><b>All materials</b> (showing ${candidates.length})</div>`;
+  }
+
+  // Render result cards
+  const resultsDiv = $("results");
+  if (!showAll){
+    const overallCard = tiers.overall ? renderTier("Overall Best", "best", tiers.overall, true) : "";
+    const gbbCards = [
+      tiers.best ? renderTier("Best", "best", tiers.best) : "",
+      tiers.better ? renderTier("Better", "better", tiers.better) : "",
+      tiers.good ? renderTier("Good", "good", tiers.good) : "",
+    ].join("");
+
+    msg(html);
+    resultsDiv.innerHTML = `
+      <details class="resultDetails" open>
+        <summary>
+          <span class="sumTitle">Overall Best</span>
+          <span class="sumHint">tap to collapse</span>
+        </summary>
+        <div class="resultsInner">${overallCard || "<div class='muted'>—</div>"}</div>
+      </details>
+
+      <details class="resultDetails" open style="margin-top:12px">
+        <summary>
+          <span class="sumTitle">Good / Better / Best options</span>
+          <span class="sumHint">tap to collapse</span>
+        </summary>
+        <div class="resultsInner">${gbbCards || "<div class='muted'>—</div>"}</div>
+      </details>
+    `;
+    resultsDiv.style.display = "block";
+  } else {
+    // show top 24 by value score
+    const top = [...candidates].sort((a,b)=>b.valueScore-a.valueScore).slice(0,24);
+    const cards = top.map(s=>renderTier("Match", "good", s, false)).join("");
+    msg(html);
+    resultsDiv.innerHTML = cards;
+    resultsDiv.style.display = "grid";
+  }
+}
+
+async function loadMaterials(){
+  try{
+    const res = await fetch("/api/materials", { cache: "no-store" });
+    if (!res.ok) throw new Error("API error: " + res.status);
+    const data = await res.json();
+    // Normalize shapes expected by engine
+    const list = (Array.isArray(data) ? data : (data.materials || data.results || []));
+    MATERIALS = list.map(m => ({
+      ...m,
+      indoor_use: asBool(m.indoor_use) ?? m.indoor_use,
+      outdoor_use: asBool(m.outdoor_use) ?? m.outdoor_use,
+      temporary: asBool(m.temporary) ?? m.temporary,
+      permanent: asBool(m.permanent) ?? m.permanent,
+      lamination_required_outdoors: asBool(m.lamination_required_outdoors) ?? m.lamination_required_outdoors,
+      print_uv_ok: asBool(m.print_uv_ok) ?? m.print_uv_ok,
+      print_latex_ok: asBool(m.print_latex_ok) ?? m.print_latex_ok,
+      print_solvent_ok: asBool(m.print_solvent_ok) ?? m.print_solvent_ok,
+      double_sided_supported: asBool(m.double_sided_supported) ?? m.double_sided_supported,
+    }));
+    $("status").textContent = `Loaded ${MATERIALS.length} materials from database.`;
+  }catch(err){
+    $("status").textContent = "Could not load materials.";
+    msg(`<div class="cardish"><b>Database load failed.</b><div class="muted" style="margin-top:6px">${err.message}</div></div>`);
+  }
+}
+
+$("run").addEventListener("click", ()=>runRecommendations(false));
+$("showAll").addEventListener("click", ()=>runRecommendations(true));
+
+loadMaterials();
+</script>
+</body>
+</html>
