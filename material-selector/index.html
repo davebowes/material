@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FASTSIGNS Material Selector</title>
+<style>
+:root{
+  --fs-red:#c8102e;
+  --fs-bg:#f3f4f6;
+  --fs-border:#e5e7eb;
+  --fs-muted:#6b7280;
+  --fs-ink:#111827;
+  --fs-good:#16a34a;
+  --fs-better:#2563eb;
+  --fs-best:#7c3aed;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--fs-bg);padding:18px;color:var(--fs-ink)}
+.wrap{max-width:1200px;margin:auto;background:#fff;border-radius:18px;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+.header{display:flex;gap:14px;align-items:center}
+.brand{display:flex;flex-direction:column;gap:2px}
+h1{color:var(--fs-red);margin:0;font-size:1.35rem;letter-spacing:.2px}
+.sub{color:var(--fs-muted);margin:0;font-size:.95rem}
+.logo{height:38px;width:auto;display:block}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--fs-border);border-radius:999px;padding:6px 10px;font-size:.85rem;color:var(--fs-muted)}
+hr{border:none;border-top:1px solid var(--fs-border);margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.cardish{border:1px solid var(--fs-border);border-radius:14px;padding:12px;background:#fff}
+label{font-weight:800;font-size:.9rem;display:block;margin-bottom:6px}
+select,input,button,textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--fs-border);border-radius:10px;font-size:.95rem;background:#fff
+}
+input[type="number"]{appearance:textfield}
+small.help{color:var(--fs-muted);display:block;margin-top:6px;line-height:1.25}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row > *{flex:1}
+button.primary{
+  background:var(--fs-red);color:#fff;border:none;font-weight:900;cursor:pointer
+}
+button.primary:hover{filter:brightness(.95)}
+button.ghost{background:#fff;color:var(--fs-ink);border:1px solid var(--fs-border);font-weight:800;cursor:pointer}
+details{border:1px dashed var(--fs-border);border-radius:14px;padding:10px 12px;background:#fafafa}
+summary{cursor:pointer;font-weight:900;color:var(--fs-ink);list-style:none}
+summary::-webkit-details-marker{display:none}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;font-weight:900;font-size:.85rem}
+.badge.good{background:rgba(22,163,74,.12);color:var(--fs-good);border:1px solid rgba(22,163,74,.25)}
+.badge.better{background:rgba(37,99,235,.12);color:var(--fs-better);border:1px solid rgba(37,99,235,.25)}
+.badge.best{background:rgba(124,58,237,.12);color:var(--fs-best);border:1px solid rgba(124,58,237,.25)}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.kpi span{font-size:.85rem;color:var(--fs-muted);border:1px solid var(--fs-border);border-radius:999px;padding:6px 10px;background:#fff}
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px}
+.resultsInner{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px}
+.resultDetails{border:1px solid var(--fs-border);border-radius:16px;padding:10px 12px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.04)}
+.resultDetails summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 2px}
+.resultDetails summary .sumTitle{font-weight:950}
+.resultDetails summary .sumHint{color:var(--fs-muted);font-weight:800;font-size:.85rem}
+.resultDetails[open] summary{margin-bottom:6px}
+.resultCard{border:1px solid var(--fs-border);border-radius:16px;padding:14px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.05)}
+.resultTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.resultName{font-weight:1000;font-size:1.05rem;margin:0}
+.muted{color:var(--fs-muted)}
+.sectionTitle{font-weight:950;margin:12px 0 6px 0}
+ul{margin:6px 0 0 18px}
+li{margin:3px 0}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.warn{color:#b45309}
+.goodtxt{color:var(--fs-good)}
+.smallgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:520px){ .smallgrid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <img class="logo" src="fastsigns-logo.png" alt="FASTSIGNS" />
+      <div class="brand">
+        <h1>FASTSIGNS Material Selector</h1>
+        <p class="sub">Answer two required questions to get <b>Good / Better / Best</b> recommendations.</p>
+      </div>
+
+    <hr/>
+
+    <div class="grid">
+      <div class="cardish">
+        <label for="signType">Required: Sign type</label>
+        <select id="signType">
+          <option value="">Select…</option>
+          <option value="flat_panel">Flat panel / rigid sign</option>
+          <option value="banner">Banner</option>
+          <option value="window_graphics">Window graphics</option>
+          <option value="wall_graphics">Wall graphics</option>
+          <option value="floor_graphics">Floor graphics</option>
+          <option value="vehicle_graphics">Vehicle graphics</option>
+          <option value="decal_label">Decal / label</option>
+        </select>
+        <small class="help">This is the biggest driver of correct recommendations.</small>
+      </div>
+
+      <div class="cardish">
+        <label for="location">Required: Location</label>
+        <select id="location">
+          <option value="">Select…</option>
+          <option value="indoor">Indoor</option>
+          <option value="outdoor">Outdoor</option>
+        </select>
+        <small class="help">Outdoor results automatically prioritize UV/water durability and longer-life substrates.</small>
+      </div>
+
+      <div class="cardish">
+        <label>Recommended (not required): Size</label>
+        <div class="smallgrid">
+          <div>
+            <input id="wIn" type="number" min="0" step="0.01" placeholder="Width (in)" />
+          </div>
+          <div>
+            <input id="hIn" type="number" min="0" step="0.01" placeholder="Height (in)" />
+          </div>
+          <div>
+            <label style="display:flex;gap:10px;align-items:center;font-weight:900;margin:0">
+              <input id="doubleSided" type="checkbox" style="width:auto;transform:translateY(1px)" />
+              Double-sided required
+            </label>
+          </div></div>
+        <small class="help">Add size for panels & seams guidance. If blank, you’ll still get correct material picks.</small>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <details>
+        <summary>Optional refinements (collapse/expand)</summary>
+        <div class="grid" style="margin-top:12px">
+          <div class="cardish">
+            <label for="duration">Duration</label>
+            <select id="duration">
+              <option value="">No preference</option>
+              <option value="temporary">Temporary / promotional</option>
+              <option value="permanent">Permanent / long-term</option>
+            </select>
+            <small class="help">Helps reduce “ties” by aligning expected lifespan.</small>
+          </div>
+
+          <div class="cardish">
+            <label for="surface">Surface (for films/graphics)</label>
+            <select id="surface">
+              <option value="">No preference</option>
+              <option value="smooth">Smooth (glass, smooth paint, metal)</option>
+              <option value="textured">Textured (orange peel, brick, block)</option>
+              <option value="low_energy">Low-energy plastic (PP/PE, some powder coats)</option>
+            </select>
+            <small class="help">If unsure, leave blank. It won’t block results.</small>
+          </div>
+
+          <div class="cardish">
+            <label for="windExposure">Wind exposure</label>
+            <select id="windExposure">
+              <option value="">Unknown</option>
+              <option value="low">Low</option>
+              <option value="med">Medium</option>
+              <option value="high">High</option>
+            </select>
+            <small class="help">High wind will penalize flexible materials and unframed large panels.</small>
+          </div></div>
+      </details>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <button class="primary" id="run">Recommend Materials</button>
+      <button class="ghost" id="showAll">Show all materials</button>
+      <button class="ghost" id="adminBtn" style="display:none">Admin</button>
+    </div>
+
+    <div id="messages" style="margin-top:12px"></div>
+    <div id="results" class="results" style="display:none"></div>
+
+    <div class="muted" style="margin-top:16px;font-size:.9rem">
+      Tip: Start with required fields only. Add optional refinements only if your results look too broad.
+    </div>
+  </div>
+
+
+    <!-- Admin dialogs -->
+    <dialog id="adminDialog" style="border:none;border-radius:16px;max-width:980px;width:96vw;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <div style="padding:14px 14px 10px 14px;border-bottom:1px solid var(--fs-border);display:flex;gap:10px;align-items:center;justify-content:space-between">
+        <div style="font-weight:950">Materials Admin</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="adminSearch" placeholder="Search…" style="max-width:260px" />
+          <button class="ghost" id="addMatBtn" style="width:auto">Add</button>
+          <button class="ghost" id="closeAdminBtn" style="width:auto">Close</button>
+        </div>
+      </div>
+      <div style="padding:12px 14px">
+        <div class="muted" style="font-size:.85rem;margin-bottom:8px">Tip: open admin mode with <span class="mono">#admin</span> in the URL. Changes write to your D1 database.</div>
+        <div id="adminTableWrap" style="overflow:auto;border:1px solid var(--fs-border);border-radius:14px"></div>
+      </div>
+    </dialog>
+
+    <dialog id="editDialog" style="border:none;border-radius:16px;max-width:760px;width:96vw;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <form method="dialog">
+        <div style="padding:14px 14px 10px 14px;border-bottom:1px solid var(--fs-border);display:flex;gap:10px;align-items:center;justify-content:space-between">
+          <div id="editTitle" style="font-weight:950">Edit material</div>
+          <div style="display:flex;gap:8px">
+            <button class="primary" id="saveMatBtn" type="button" style="width:auto">Save</button>
+            <button class="ghost" id="cancelEditBtn" style="width:auto">Cancel</button>
+          </div>
+        </div>
+        <div style="padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div><label>ID</label><input id="f_id" placeholder="unique id (no spaces)" /></div>
+          <div style="grid-column:1/-1"><label>Name</label><input id="f_name" placeholder="Material name" /></div>
+
+          <div><label>Category</label><input id="f_category" placeholder="Rigid Substrate / Vinyl / Banner…" /></div>
+          <div><label>Format</label><input id="f_format" placeholder="Rigid / Vinyl / Banner…" /></div>
+          <div><label>Thickness</label><input id="f_thickness" placeholder="6mm / 3mm / —" /></div>
+
+          <div style="grid-column:1/-1">
+            <label>Sign types (comma separated)</label>
+            <input id="f_sign_types" placeholder="flat_panel, banner, wall_graphic, window_graphic, floor_graphic, decal_label" />
+            <small class="help">Use DB keys (singular): wall_graphic, window_graphic, floor_graphic.</small>
+          </div>
+
+          <div><label>Indoor use</label><select id="f_indoor_use"><option value="">—</option><option value="true">true</option><option value="false">false</option></select></div>
+          <div><label>Outdoor use</label><select id="f_outdoor_use"><option value="">—</option><option value="true">true</option><option value="false">false</option></select></div>
+          <div><label>Temporary</label><select id="f_temporary"><option value="">—</option><option value="true">true</option><option value="false">false</option></select></div>
+          <div><label>Permanent</label><select id="f_permanent"><option value="">—</option><option value="true">true</option><option value="false">false</option></select></div>
+
+          <div><label>Max width (in)</label><input id="f_max_w_in" type="number" step="0.01" /></div>
+          <div><label>Max height (in)</label><input id="f_max_h_in" type="number" step="0.01" /></div>
+          <div><label>Rec max unframed area (sqft)</label><input id="f_rec_unframed" type="number" step="0.01" /></div>
+
+          <div><label>UV (0-10)</label><input id="f_uv" type="number" step="1" min="0" max="10" /></div>
+          <div><label>Water (0-10)</label><input id="f_water" type="number" step="1" min="0" max="10" /></div>
+          <div><label>Rigidity (0-10)</label><input id="f_rigid" type="number" step="1" min="0" max="10" /></div>
+          <div><label>Conform (0-10)</label><input id="f_conform" type="number" step="1" min="0" max="10" /></div>
+
+          <div><label>Adhesive type</label><input id="f_adhesive" placeholder="pressure-activated / removable / static…" /></div>
+          <div><label>Removal (0-10)</label><input id="f_removal" type="number" step="1" min="0" max="10" /></div>
+
+          <div><label>Material cost ($/sqft)</label><input id="f_mat_cost" type="number" step="0.01" /></div>
+          <div><label>Print cost ($/sqft)</label><input id="f_print_cost" type="number" step="0.01" /></div>
+
+          <div style="grid-column:1/-1"><label>Notes</label><textarea id="f_notes" rows="3" placeholder="Short install notes / cautions…"></textarea></div>
+        </div>
+      </form>
+    </dialog>
+
+<script>
+let MATERIALS = [];
+
+const $ = (id) => document.getElementById(id);
+
+function asBool(v){
+  if (v === true || v === false) return v;
+  const s = (v ?? "").toString().trim().toLowerCase();
+  if (["true","1","yes","y"].includes(s)) return true;
+  if (["false","0","no","n"].includes(s)) return false;
+  return null;
+}
+function parseJsonArray(v){
+  if (v == null) return [];
+  if (Array.isArray(v)) return v;
+  const s = (""+v).trim();
+  if (!s || s === "[]") return [];
+  try { return JSON.parse(s); } catch { 
+    // handle old single-quote list strings
+    try { return JSON.parse(s.replace(/'/g,'"')); } catch { return [s]; }
+  }
+}
+function normalizeSignType(st){
+  const s = (st || "").toString().trim();
+  if (!s) return "";
+  const map = {
+    window_graphics: "window_graphic",
+    wall_graphics: "wall_graphic",
+    floor_graphics: "floor_graphic",
+    vehicle_graphics: "vehicle_graphic",
+  };
+  if (map[s]) return map[s];
+  // also accept singulars already in DB
+  return s.endsWith("s") ? s.slice(0,-1) : s;
+}
+
+function isAdhesiveScenario(signType){
+  return ["wall_graphic","window_graphic","floor_graphic","vehicle_graphic","decal_label"].includes(signType);
+}
+
+function matchesSignType(material, signType){
+  const signTypes = parseJsonArray(material.sign_types).map(normalizeSignType);
+  if (!signType) return true;
+  if (!signTypes.length) return true;
+  if (signTypes.includes(signType)) return true;
+
+  // Fallback for adhesive scenarios when DB sign_types are incomplete
+  if (isAdhesiveScenario(signType)){
+    const fmt = (material.format || "").toString().toLowerCase();
+    const adh = (material.adhesive_type || "").toString().trim();
+    const conform = Number(material.conformability_0_10 ?? material.conformability_0_5 ?? 0);
+    const removal = Number(material.removal_cleanliness_0_10 ?? material.removal_cleanliness_0_5 ?? 0);
+    const subs = parseJsonArray(material.recommended_substrates).map(x => (""+x).toLowerCase());
+
+    const looksLikeFilm = fmt.includes("vinyl") || adh.length > 0 || conform > 0 || removal > 0;
+    if (!looksLikeFilm) return false;
+
+    if (signType === "vehicle_graphic"){
+      // strongly prefer products tagged for vehicles
+      return subs.some(x => x.includes("vehicle")) || (material.name||"" ).toLowerCase().includes("ij") || conform >= 6;
+    }
+    if (signType === "floor_graphic"){
+      // require decent water/abrasion-ish (proxy: water + chem) and laminate allowed
+      const water = Number(material.water_resistance_0_10 ?? 0);
+      const chem = Number(material.chemical_resistance_0_10 ?? 0);
+      return (water + chem) >= 10;
+    }
+    if (signType === "decal_label"){
+      // labels/decals: removable helps; otherwise general calendered ok
+      return removal >= 4 || adh.length > 0 || fmt.includes("vinyl");
+    }
+    return true;
+  }
+
+  return false;
+}
+
+
+function normalizeSignType(st){
+  const s = (st || "").toString().trim();
+  if (!s) return "";
+  const map = {
+    window_graphics: "window_graphic",
+    wall_graphics: "wall_graphic",
+    floor_graphics: "floor_graphic",
+    vehicle_graphics: "vehicle_graphic",
+  };
+  if (map[s]) return map[s];
+  // accept DB-style singulars (window_graphic, wall_graphic, floor_graphic, etc.)
+  return s.endsWith("s") ? s.slice(0,-1) : s;
+}
+
+function isAdhesiveScenario(signTypeNorm){
+  return ["window_graphic","wall_graphic","floor_graphic","vehicle_graphic","decal_label"].includes(signTypeNorm);
+}
+
+function matchesSignType(material, signTypeNorm){
+  if (!signTypeNorm) return true;
+  const signTypes = parseJsonArray(material.sign_types);
+
+  // normal match if DB has it
+  if (signTypes.length && signTypes.includes(signTypeNorm)) return true;
+
+  // Vehicle graphics are often represented in the DB as vinyl materials with vehicle substrates,
+  // not always tagged as a dedicated sign_type. Use a smart fallback.
+  if (signTypeNorm === "vehicle_graphic"){
+    const subs = parseJsonArray(material.recommended_substrates).map(x => (""+x).toLowerCase());
+    const name = (material.name || "").toLowerCase();
+    const format = (material.format || "").toLowerCase();
+    const adhesive = (material.adhesive_type || "").toLowerCase();
+    const hasVehicleHint = subs.some(x=>x.includes("vehicle") || x.includes("fleet") || x.includes("car")) || name.includes("wrap") || name.includes("ij180");
+    const isVinylFilm = format.includes("vinyl") || !!adhesive || asBool(material.air_egress) === true;
+    return hasVehicleHint && isVinylFilm;
+  }
+
+  // Decals/labels: prefer materials with adhesive (or static cling) and decent removability
+  if (signTypeNorm === "decal_label"){
+    const format = (material.format || "").toLowerCase();
+    const adhesive = (material.adhesive_type || "").toLowerCase();
+    const removal = Number(material.removal_cleanliness_0_10 ?? material.removal_cleanliness_0_5 ?? 0);
+    const isFilm = format.includes("vinyl") || format.includes("film") || format.includes("poly") || !!adhesive;
+    return isFilm && (removal >= 3 || adhesive.includes("remov") || adhesive.includes("static"));
+  }
+
+  // Other adhesive scenarios: allow vinyl/film materials even if sign_types array is incomplete.
+  if (["window_graphic","wall_graphic","floor_graphic"].includes(signTypeNorm)){
+    const format = (material.format || "").toLowerCase();
+    const adhesive = (material.adhesive_type || "").toLowerCase();
+    const isFilm = format.includes("vinyl") || format.includes("film") || !!adhesive || asBool(material.air_egress) === true;
+    return isFilm;
+  }
+
+  // Default: if sign_types is empty in DB, don't block; otherwise require match.
+  return signTypes.length ? false : true;
+}
+
+function expenseDollarSigns(n){
+  if (n == null || isNaN(n)) return "—";
+  const v = Number(n);
+  if (v <= 2) return "$";
+  if (v <= 4) return "$$";
+  if (v <= 6) return "$$$";
+  if (v <= 9) return "$$$$";
+  return "$$$$$";
+}
+
+function sqftFromInches(wIn, hIn){
+  if (!wIn || !hIn) return null;
+  return (Number(wIn) * Number(hIn)) / 144;
+}
+function panelsAndSeams(wIn, hIn, mat){
+  const w = Number(wIn);
+  const h = Number(hIn);
+  if (!w || !h) return {panels:null, seams:null, cols:null, rows:null};
+
+  // Prefer explicit sheet/roll constraints if present
+  const maxW = Number(mat.max_w_in ?? mat.max_width_in ?? mat.roll_width);
+  const maxH = Number(mat.max_h_in ?? mat.max_height_in);
+
+  if (!maxW || isNaN(maxW)) return {panels:null, seams:null, cols:null, rows:null};
+
+  // Panels can be rotated to fit (48x96 is same as 96x48), and customer sizes can also be rotated.
+  // We compute the best (fewest panels; if tie, fewest seams) across all valid orientations.
+  const jobOrients = [
+    {w, h},
+    {w: h, h: w},
+  ].filter((o, i, a) => a.findIndex(x => x.w === o.w && x.h === o.h) === i);
+
+  const sheetOrients = (!maxH || isNaN(maxH))
+    ? [{w: maxW, h: null}] // roll: fixed width; length effectively unlimited
+    : [
+        {w: maxW, h: maxH},
+        {w: maxH, h: maxW},
+      ].filter((o, i, a) => a.findIndex(x => x.w === o.w && x.h === o.h) === i);
+
+  let best = null;
+
+  for (const jo of jobOrients){
+    for (const so of sheetOrients){
+      // If it fits in one panel either way, it's one panel.
+      const fits = so.h
+        ? (jo.w <= so.w && jo.h <= so.h)
+        : (jo.w <= so.w) || (jo.h <= so.w); // roll: either dimension can run across width when rotated
+
+      let cols, rows;
+      if (fits){
+        cols = 1;
+        rows = 1;
+      } else {
+        cols = Math.max(1, Math.ceil(jo.w / so.w));
+        // Many roll materials are effectively "infinite" in length; if no max height, assume 1 row
+        rows = (!so.h) ? 1 : Math.max(1, Math.ceil(jo.h / so.h));
+      }
+
+      const panels = cols * rows;
+      const verticalSeams = Math.max(0, cols - 1) * rows;
+      const horizontalSeams = Math.max(0, rows - 1) * cols;
+      const seams = verticalSeams + horizontalSeams;
+
+      const cand = {panels, seams, cols, rows};
+      if (!best) best = cand;
+      else if (cand.panels < best.panels) best = cand;
+      else if (cand.panels === best.panels && cand.seams < best.seams) best = cand;
+    }
+  }
+
+  return best ?? {panels:null, seams:null, cols:null, rows:null};
+}
+
+// --- HARD RULES (must pass) ---
+function hardFilter(m, q){
+  const reasons = [];
+  const signTypeNorm = normalizeSignType(q.signType);
+  if (signTypeNorm && !matchesSignType(m, signTypeNorm)){
+    reasons.push(`Not intended for sign type: ${signTypeNorm}`);
+  }
+
+  const indoorOK = asBool(m.indoor_use);
+  const outdoorOK = asBool(m.outdoor_use);
+
+  if (q.location === "indoor" && indoorOK === false) reasons.push("Indoor use not recommended");
+  if (q.location === "outdoor" && outdoorOK === false) reasons.push("Outdoor use not recommended");
+
+  // Mesh banners should be outdoor-only.
+  if (normalizeSignType(q.signType) === "banner" && q.location === "indoor"){
+    const nm = (m.name || "").toString().toLowerCase();
+    if (nm.includes("mesh")) reasons.push("Mesh banners are outdoor-only");
+  }
+
+  if (q.duration === "temporary"){
+    const tmp = asBool(m.temporary);
+    if (tmp === false) reasons.push("Not suited for temporary use");
+  }
+  if (q.duration === "permanent"){
+    const perm = asBool(m.permanent);
+    if (perm === false) reasons.push("Not suited for permanent use");
+  }
+
+  if (q.doubleSided){
+    const ds = asBool(m.double_sided_supported ?? m.double_sided);
+    if (ds === false) reasons.push("Does not support double-sided");
+  }
+
+  if (q.location === "outdoor"){
+    const lamReq = asBool(m.lamination_required_outdoors);
+    if (lamReq === true){
+      reasons.push("Outdoor use typically requires laminate");
+    }
+  }
+
+  // surface refinement (optional) - only lightly applied
+  if (q.surface && isAdhesiveScenario(normalizeSignType(q.signType))){
+    const subs = parseJsonArray(m.recommended_substrates).map(x=>(""+x).toLowerCase());
+    if (subs.length){
+      if (q.surface === "smooth" && !subs.some(x=>x.includes("smooth") || x.includes("glass") || x.includes("metal")))
+        reasons.push("Not ideal for smooth surfaces");
+      if (q.surface === "textured" && !subs.some(x=>x.includes("texture") || x.includes("brick") || x.includes("block")))
+        reasons.push("Not ideal for textured surfaces");
+      if (q.surface === "low_energy" && !subs.some(x=>x.includes("low") || x.includes("pp") || x.includes("pe")))
+        reasons.push("Not ideal for low-energy plastics");
+    }
+  }
+
+  // Disqualify only on hard mismatches; keep warning-style reasons as soft penalties later
+  const disqualifying = reasons.filter(r =>
+      r.startsWith("Not intended") ||
+      r.includes("not recommended") ||
+      r.includes("Not suited") ||
+      r.includes("Does not support") ||
+      r.includes("Not compatible")
+  );
+
+  return { pass: disqualifying.length === 0, reasons, disqualifying };
+}
+
+// --- SCORING (soft ranking) ---
+// absolute performance: higher is better EXCEPT risk/sensitivity fields where higher is worse.
+function scoreMaterial(m, q){
+  const perf = (v) => Number(v ?? 0);
+  const bad  = (v) => Number(v ?? 0); // higher is worse
+
+  const uv = perf(m.uv_resistance_0_10 ?? 0);
+  const water = perf(m.water_resistance_0_10 ?? 0);
+  const chem = perf(m.chemical_resistance_0_10 ?? 0);
+  const rigid = perf(m.rigidity_0_10 ?? 0);
+  const impact = perf(m.impact_resistance_0_10 ?? 0);
+
+  const warpRisk = bad(m.warp_risk_0_10 ?? 0);
+  const humidSens = bad(m.humidity_sensitivity_0_10 ?? 0);
+
+  const removal = perf(m.removal_cleanliness_0_10 ?? 0);
+  const conform = perf(m.conformability_0_10 ?? 0);
+
+  // Install difficulty: lower is better
+  const skill = Number(m.installer_skill_level_1_5 ?? 3);
+  const installEase = 10 - Math.round(((skill-1) / 4) * 10);
+
+  // Wind: if high wind, reward rigidity/strength
+  const wind = perf(m.wind_rating_0_10 ?? (Number(m.wind_rating_0_5 ?? 0) * 2));
+
+  const areaSqft = sqftFromInches(q.wIn, q.hIn) || 0;
+  const signTypeNorm = normalizeSignType(q.signType);
+
+  // For rigid panels, stiffness matters more as size grows.
+  const rigidityWeight = (signTypeNorm === "flat_panel")
+    ? (0.9 + Math.min(0.9, areaSqft / 32))
+    : 0.9;
+
+  // Base performance score, tuned by location
+  let performanceScore = (
+    (uv * 1.2) +
+    (water * (q.location === "outdoor" ? 1.4 : 0.6)) +
+    (chem * 0.6) +
+    (rigid * rigidityWeight) +
+    (impact * 0.7) +
+    (conform * (isAdhesiveScenario(signTypeNorm) ? 1.0 : 0.4)) +
+    (removal * (q.priority === "clean_removal" ? 1.2 : 0.5)) +
+    (installEase * (q.priority === "easy_install" ? 1.2 : 0.4)) +
+    (wind * (q.windExposure === "high" ? 1.2 : q.windExposure === "med" ? 0.6 : 0.2))
+  );
+
+  // Risk penalties
+  performanceScore -= (warpRisk * 0.9) + (humidSens * 0.6);
+
+
+  // Large unframed rigid panels: prefer thicker/stiffer options.
+  const recMax = Number(m.recommended_max_unframed_area_sqft ?? 0);
+  let extraReasons = [];
+  if (signTypeNorm === "flat_panel" && areaSqft && recMax && areaSqft > recMax){
+    const over = areaSqft - recMax;
+    // Penalize thinner/weaker panels when exceeding recommended unframed area.
+    const penalty = Math.min(18, 6 + (over * 1.2));
+    performanceScore -= penalty;
+    extraReasons.push(`Size exceeds recommended unframed area (${recMax} sqft). Consider a thicker/stiffer panel.`);
+  }
+  // Premium finish bump (if acrylic/ACM/aluminum or finish options)
+  const name = (m.name ?? "").toString().toLowerCase();
+  const finish = parseJsonArray(m.surface_finish_options).join(" ").toLowerCase();
+  const premiumHint = (name.includes("acrylic") || name.includes("acm") || name.includes("dibond") || name.includes("aluminum") || finish.includes("polish"));
+  
+  // Clamp
+  performanceScore = Math.max(0, Math.min(100, performanceScore));
+
+  // Cost basis (per sqft) — we show expense as $ signs instead of an estimated total.
+  const matCost = Number(m.material_cost_sqft ?? 0);
+  const printCost = Number(m.print_cost_sqft ?? 0);
+  const unitCostSqft = (matCost || printCost) ? (matCost + printCost) : null;
+
+  // Value score (higher better): performance per dollar-ish (when cost exists)
+  let valueScore = performanceScore;
+  if (unitCostSqft != null && unitCostSqft > 0){
+    valueScore = performanceScore / Math.log10(unitCostSqft + 10);
+  }
+
+  // Warnings from hardFilter (non-disqualifying)
+  const hf = hardFilter(m, q);
+  const reasons = [...(hf.reasons || []), ...extraReasons];
+  const warningCount = reasons.length - (hf.disqualifying?.length || 0);
+
+  return { performanceScore, valueScore, unitCostSqft, installEase, warningCount, reasons };
+}
+
+function pickDistinct(existing, candidates, keyFn){
+  // pick highest keyFn among candidates that isn't already used by id
+  const used = new Set(existing.map(x=>x.material.id));
+  const sorted = [...candidates].sort((a,b)=>keyFn(b)-keyFn(a));
+  for (const s of sorted){
+    if (!used.has(s.material.id)) return s;
+  }
+  return null;
+}
+
+function buildTiers(scored){
+  // candidates already hard-pass and scored
+  // Good/Better/Best are a simple ladder; picked from eligible materials.
+  const clean = scored.filter(s=>s.warningCount <= 2);
+  const pool = clean.length ? clean : scored;
+
+  // Good: lean economical when cost data exists; otherwise highest value.
+  const hasCost = pool.some(s=>s.unitCostSqft != null);
+  const good = hasCost
+    ? [...pool].sort((a,b)=>(a.unitCostSqft??1e18)-(b.unitCostSqft??1e18))[0]
+    : [...pool].sort((a,b)=>b.valueScore-a.valueScore)[0];
+
+  const better = pickDistinct([good], pool, s=>s.valueScore);
+  const best = pickDistinct([good, better].filter(Boolean), pool, s=>s.performanceScore);
+  return { good, better, best };
+}
+
+function prosCons(m, s, q){
+  const pros=[], cons=[];
+  const p = s.performanceScore;
+
+  const uv = Number(m.uv_resistance_0_10 ?? 0);
+  const water = Number(m.water_resistance_0_10 ?? 0);
+  const rigid = Number(m.rigidity_0_10 ?? 0);
+  const impact = Number(m.impact_resistance_0_10 ?? 0);
+  const removal = Number(m.removal_cleanliness_0_10 ?? 0);
+  const conform = Number(m.conformability_0_10 ?? 0);
+  const warp = Number(m.warp_risk_0_10 ?? 0);
+
+  if (q.location==="outdoor" && (uv>=7 || water>=7)) pros.push("Strong outdoor durability (UV/water).");
+  if (rigid>=7) pros.push("Very rigid — resists oil-canning and flex.");
+  if (impact>=7) pros.push("Good impact resistance.");
+  if ((q.signType.includes("graphics") || q.signType==="decal_label") && conform>=7) pros.push("High conformability for curves/contours.");
+  if (q.priority==="clean_removal" && removal>=7) pros.push("Clean removability compared to most options.");
+
+  if (warp>=7) cons.push("Higher warp risk if not properly supported.");
+  if (q.location==="outdoor" && (uv<=4 || water<=4)) cons.push("Not ideal for harsh outdoor exposure.");
+  if ((q.signType.includes("graphics") || q.signType==="decal_label") && conform<=4) cons.push("Limited conformability; better for flat surfaces.");
+  if (s.warningCount>0) cons.push("Some scenario warnings apply (see ‘Why this fit’).");
+
+  if (!pros.length) pros.push("Meets core requirements for the selected scenario.");
+  if (!cons.length) cons.push("No major drawbacks identified for this scenario.");
+
+  return { pros, cons };
+}
+
+function thicknessInsight(m, q){
+  const t = (m.thickness ?? "").toString().trim();
+  if (!t) return null;
+
+  // Try to pull a mm value from strings like "6mm", "3 mm", "0.060in"
+  let mm = null;
+  const mmMatch = t.match(/([0-9]+(?:\.[0-9]+)?)\s*mm/i);
+  if (mmMatch) mm = Number(mmMatch[1]);
+  const inMatch = (!mmMatch) ? t.match(/([0-9]+(?:\.[0-9]+)?)\s*in/i) : null;
+  if (inMatch) mm = Number(inMatch[1]) * 25.4;
+
+  const isRigid = ((m.format ?? "").toString().toLowerCase().includes("rigid")) || (parseJsonArray(m.sign_types).includes("flat_panel"));
+  if (!isRigid) return `Thickness: ${t}`;
+
+  const w = Number(q.wIn||0), h = Number(q.hIn||0);
+  const largerPanel = (w && h) ? ((w*h) >= (24*36)) : false;
+  const windy = (q.windExposure === "high");
+
+  let note = "";
+  if (mm != null){
+    if (mm >= 6) note = "Higher thickness typically means a stiffer panel—helpful for larger freestanding/unframed signs.";
+    else if (mm <= 3) note = "Thinner panels can flex more; for large freestanding/unframed signs, consider a thicker/stiffer option.";
+  }
+  if ((largerPanel || windy) && q.signType === "flat_panel"){
+    note = note || "Panel stiffness matters more for large freestanding/unframed signs; wall-mounted installs are generally more forgiving.";
+  }
+  if (q.signType === "flat_panel" && q.location === "indoor" && note){
+    note += " For indoor wall-mounts, thickness typically matters less than finish and mounting method.";
+  }
+
+  return note ? `Thickness: ${t} — ${note}` : `Thickness: ${t}`;
+}
+
+function renderTier(label, badgeClass, scoredObj){
+  const m = scoredObj.material;
+  const q = getQuery();
+  const uc = parseJsonArray(m.use_cases);
+  const im = parseJsonArray(m.install_methods);
+
+  const sqft = sqftFromInches(q.wIn, q.hIn);
+  const ps = panelsAndSeams(q.wIn, q.hIn, m);
+
+  const pc = prosCons(m, scoredObj, q);
+
+  const reasonLines = scoredObj.reasons || [];
+  const why = reasonLines.length ? reasonLines : ["Matches required sign type and location."];
+
+  const expenseLine = (scoredObj.unitCostSqft != null)
+    ? `<span><b>Expense:</b> ${expenseDollarSigns(scoredObj.unitCostSqft)}</span>`
+    : `<span class="muted">Expense: —</span>`;
+
+  const panelLine = (ps.panels != null)
+    ? `<div><b>Panels:</b> ${ps.panels} <span class="muted">(${ps.cols} wide × ${ps.rows} high)</span></div><div><b>Seams:</b> ${ps.seams}</div>`
+    : `<span class="muted">Add width + height (in) to calculate panels/seams.</span>`;
+
+  const thicknessLine = thicknessInsight(m, q);
+
+  return `
+    <div class="resultCard">
+      <div class="resultTop">
+        <div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <span class="badge ${badgeClass}">${label}</span></div>
+          <p class="resultName">${m.name || "Unnamed material"}</p>
+</div>
+      </div>
+
+      <div style="margin-top:10px" class="smallgrid">
+        <div>${expenseLine}<div class="muted" style="margin-top:6px;font-size:.85rem;line-height:1.25">Lamination can extend ink life (when applicable).</div></div>
+        <div>${panelLine}</div>
+      </div>
+
+      ${thicknessLine ? `<div class="muted" style="margin-top:10px;line-height:1.35">${thicknessLine}</div>` : ""}
+
+      <div class="sectionTitle">Use cases</div>
+      <ul>${uc.slice(0,10).map(x=>`<li>${x}</li>`).join("") || "<li class='muted'>—</li>"}</ul>
+
+      <div class="sectionTitle">Installation notes</div>
+      <div class="muted" style="line-height:1.35">${(m.notes||"—")}</div>
+      ${im.length ? `<div class="muted" style="margin-top:6px"><b>Methods:</b> ${im.join(", ")}</div>` : "" }<div class="sectionTitle">Pros</div>
+      <ul>${pc.pros.map(x=>`<li class="goodtxt">${x}</li>`).join("")}</ul>
+
+      <div class="sectionTitle">Cons</div>
+      <ul>${pc.cons.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+      <div class="sectionTitle">Why this fit</div>
+      <ul>${why.slice(0,8).map(r=>`<li>${r.includes("requires laminate") ? `<span class="warn">${r}</span>` : r}</li>`).join("")}</ul>
+    </div>
+  `;
+}
+
+function getQuery(){
+  return {
+    signType: $("signType").value,
+    location: $("location").value,
+    wIn: $("wIn").value,
+    hIn: $("hIn").value,
+    duration: $("duration").value,
+    surface: $("surface").value,
+    windExposure: $("windExposure").value,
+    doubleSided: $("doubleSided").checked,
+  };
+}
+
+function msg(html){
+  $("messages").innerHTML = html;
+}
+
+function runRecommendations(showAll=false){
+  const q = getQuery();
+  const requiredMissing = [];
+  if (!showAll){
+    if (!q.signType) requiredMissing.push("Sign type");
+    if (!q.location) requiredMissing.push("Location");
+  }
+  if (requiredMissing.length){
+    msg(`<div class="cardish"><b>Missing required:</b> ${requiredMissing.join(", ")}.</div>`);
+    $("results").style.display = "none";
+    return;
+  }
+
+  const candidates = [];
+  const excluded = [];
+  for (const m of MATERIALS){
+    const hf = hardFilter(m, q);
+    if (showAll || hf.pass){
+      const s = scoreMaterial(m, q);
+      candidates.push({ material: m, ...s });
+    } else {
+      excluded.push({ material: m, why: hf.disqualifying });
+    }
+  }
+
+  if (!candidates.length){
+    msg(`<div class="cardish"><b>No eligible materials found.</b><div class="muted" style="margin-top:6px">Try removing optional refinements, or choose a different sign type.</div></div>`);
+    $("results").style.display = "none";
+    return;
+  }
+
+  // Build tiers from eligible candidates
+  const tiers = showAll
+    ? { good: null, better: null, best: null }
+    : buildTiers(candidates);
+
+  let html = "";
+
+  if (!showAll){
+    html += `<div class="cardish"><b>Eligible materials:</b> ${candidates.length}</div>`;
+  } else {
+    html += `<div class="cardish"><b>All materials</b> (showing ${candidates.length})</div>`;
+  }
+
+  // Render result cards
+  const resultsDiv = $("results");
+  if (!showAll){
+    const gbbCards = [
+      tiers.best ? renderTier("Best", "best", tiers.best) : "",
+      tiers.better ? renderTier("Better", "better", tiers.better) : "",
+      tiers.good ? renderTier("Good", "good", tiers.good) : "",
+    ].join("");
+
+    msg(html);
+    resultsDiv.innerHTML = `<details class="resultDetails" open style="margin-top:12px">
+        <summary>
+          <span class="sumTitle">Good / Better / Best options</span>
+          <span class="sumHint">tap to collapse</span>
+        </summary>
+        <div class="resultsInner">${gbbCards || "<div class='muted'>—</div>"}</div>
+      </details>
+    `;
+    resultsDiv.style.display = "block";
+  } else {
+    // show top 24 by value score
+    const top = [...candidates].sort((a,b)=>b.valueScore-a.valueScore).slice(0,24);
+    const cards = top.map(s=>renderTier("Match", "good", s)).join("");
+    msg(html);
+    resultsDiv.innerHTML = cards;
+    resultsDiv.style.display = "grid";
+  }
+}
+
+async function loadMaterials(){
+  try{
+    const res = await fetch("/api/materials", { cache: "no-store" });
+    if (!res.ok) throw new Error("API error: " + res.status);
+    const data = await res.json();
+    // Normalize shapes expected by engine
+    const list = (Array.isArray(data) ? data : (data.materials || data.results || []));
+    MATERIALS = list.map(m => ({
+      ...m,
+      indoor_use: asBool(m.indoor_use) ?? m.indoor_use,
+      outdoor_use: asBool(m.outdoor_use) ?? m.outdoor_use,
+      temporary: asBool(m.temporary) ?? m.temporary,
+      permanent: asBool(m.permanent) ?? m.permanent,
+      lamination_required_outdoors: asBool(m.lamination_required_outdoors) ?? m.lamination_required_outdoors,
+      print_uv_ok: asBool(m.print_uv_ok) ?? m.print_uv_ok,
+      print_latex_ok: asBool(m.print_latex_ok) ?? m.print_latex_ok,
+      print_solvent_ok: asBool(m.print_solvent_ok) ?? m.print_solvent_ok,
+      double_sided_supported: asBool(m.double_sided_supported) ?? m.double_sided_supported,
+    }));
+  }catch(err){
+    msg(`<div class="cardish"><b>Database load failed.</b><div class="muted" style="margin-top:6px">${err.message}</div></div>`);
+  }
+}
+
+
+// --- ADMIN MODE (D1 CRUD) ---
+const adminMode = (location.hash || "").toLowerCase().includes("admin") || new URLSearchParams(location.search).has("admin");
+const adminBtn = $("adminBtn");
+if (adminMode && adminBtn) adminBtn.style.display = "block";
+
+function getAdminToken(){
+  return sessionStorage.getItem("ADMIN_TOKEN") || "";
+}
+async function requireAdminToken(){
+  let tok = getAdminToken();
+  if (tok) return tok;
+  tok = prompt("Enter admin token:");
+  if (!tok) throw new Error("Admin token required.");
+  sessionStorage.setItem("ADMIN_TOKEN", tok);
+  return tok;
+}
+
+function openDialog(id){
+  const d = $(id);
+  if (!d) return;
+  if (typeof d.showModal === "function") d.showModal();
+  else d.setAttribute("open","open");
+}
+function closeDialog(id){
+  const d = $(id);
+  if (!d) return;
+  if (typeof d.close === "function") d.close();
+  else d.removeAttribute("open");
+}
+
+function renderAdminTable(list){
+  const wrap = $("adminTableWrap");
+  if (!wrap) return;
+  const rows = list.map(m=>`
+    <tr>
+      <td class="mono">${m.id||""}</td>
+      <td><b>${m.name||""}</b><div class="muted" style="font-size:.8rem">${m.category||""} • ${m.format||""}</div></td>
+      <td class="muted" style="white-space:nowrap">${(parseJsonArray(m.sign_types)||[]).join(", ")}</td>
+      <td style="white-space:nowrap">
+        <button class="ghost" data-edit="${m.id}" style="width:auto;padding:8px 10px">Edit</button>
+        <button class="ghost" data-del="${m.id}" style="width:auto;padding:8px 10px">Delete</button>
+      </td>
+    </tr>
+  `).join("");
+
+  wrap.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:.92rem">
+      <thead>
+        <tr style="text-align:left;background:#fafafa">
+          <th style="padding:10px;border-bottom:1px solid var(--fs-border)">ID</th>
+          <th style="padding:10px;border-bottom:1px solid var(--fs-border)">Name</th>
+          <th style="padding:10px;border-bottom:1px solid var(--fs-border)">Sign types</th>
+          <th style="padding:10px;border-bottom:1px solid var(--fs-border)">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="4" class="muted" style="padding:10px">No materials.</td></tr>`}
+      </tbody>
+    </table>
+  `;
+
+  wrap.querySelectorAll("[data-edit]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.getAttribute("data-edit");
+      const m = MATERIALS.find(x=>x.id===id);
+      openEdit(m);
+    });
+  });
+  wrap.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const id = btn.getAttribute("data-del");
+      if (!confirm(`Delete material ${id}?`)) return;
+      await adminDelete(id);
+      await refreshAdmin();
+    });
+  });
+}
+
+async function refreshAdmin(){
+  const q = ($("adminSearch")?.value || "").toLowerCase().trim();
+  const list = MATERIALS.filter(m=>{
+    if (!q) return true;
+    return (m.id||"").toLowerCase().includes(q) || (m.name||"").toLowerCase().includes(q) || (m.category||"").toLowerCase().includes(q);
+  });
+  renderAdminTable(list);
+}
+
+function openAdmin(){
+  openDialog("adminDialog");
+  refreshAdmin();
+}
+
+function boolSel(val){
+  if (val === true) return "true";
+  if (val === false) return "false";
+  if (typeof val === "string"){
+    const s = val.trim().toLowerCase();
+    if (["true","1","yes","y"].includes(s)) return "true";
+    if (["false","0","no","n"].includes(s)) return "false";
+  }
+  return "";
+}
+
+let CURRENT_EDIT_ID = null;
+
+function openEdit(m){
+  CURRENT_EDIT_ID = m?.id || null;
+  $("editTitle").textContent = CURRENT_EDIT_ID ? `Edit material: ${CURRENT_EDIT_ID}` : "Add material";
+  $("f_id").value = m?.id || "";
+  $("f_id").disabled = !!CURRENT_EDIT_ID;
+  $("f_name").value = m?.name || "";
+  $("f_category").value = m?.category || "";
+  $("f_format").value = m?.format || "";
+  $("f_thickness").value = m?.thickness || "";
+  $("f_sign_types").value = (parseJsonArray(m?.sign_types)||[]).join(", ");
+  $("f_indoor_use").value = boolSel(m?.indoor_use);
+  $("f_outdoor_use").value = boolSel(m?.outdoor_use);
+  $("f_temporary").value = boolSel(m?.temporary);
+  $("f_permanent").value = boolSel(m?.permanent);
+  $("f_max_w_in").value = m?.max_w_in ?? m?.max_width_in ?? "";
+  $("f_max_h_in").value = m?.max_h_in ?? m?.max_height_in ?? "";
+  $("f_rec_unframed").value = m?.recommended_max_unframed_area_sqft ?? "";
+  $("f_uv").value = m?.uv_resistance_0_10 ?? "";
+  $("f_water").value = m?.water_resistance_0_10 ?? "";
+  $("f_rigid").value = m?.rigidity_0_10 ?? "";
+  $("f_conform").value = m?.conformability_0_10 ?? "";
+  $("f_adhesive").value = m?.adhesive_type ?? "";
+  $("f_removal").value = m?.removal_cleanliness_0_10 ?? "";
+  $("f_mat_cost").value = m?.material_cost_sqft ?? "";
+  $("f_print_cost").value = m?.print_cost_sqft ?? "";
+  $("f_notes").value = m?.notes ?? "";
+  openDialog("editDialog");
+}
+
+function collectEditPayload(){
+  const signTypes = $("f_sign_types").value.split(",").map(s=>s.trim()).filter(Boolean);
+  const payload = {
+    id: $("f_id").value.trim(),
+    name: $("f_name").value.trim(),
+    category: $("f_category").value.trim(),
+    format: $("f_format").value.trim(),
+    thickness: $("f_thickness").value.trim(),
+    sign_types: signTypes,
+    indoor_use: $("f_indoor_use").value || null,
+    outdoor_use: $("f_outdoor_use").value || null,
+    temporary: $("f_temporary").value || null,
+    permanent: $("f_permanent").value || null,
+    max_w_in: $("f_max_w_in").value ? Number($("f_max_w_in").value) : null,
+    max_h_in: $("f_max_h_in").value ? Number($("f_max_h_in").value) : null,
+    recommended_max_unframed_area_sqft: $("f_rec_unframed").value ? Number($("f_rec_unframed").value) : null,
+    uv_resistance_0_10: $("f_uv").value ? Number($("f_uv").value) : null,
+    water_resistance_0_10: $("f_water").value ? Number($("f_water").value) : null,
+    rigidity_0_10: $("f_rigid").value ? Number($("f_rigid").value) : null,
+    conformability_0_10: $("f_conform").value ? Number($("f_conform").value) : null,
+    adhesive_type: $("f_adhesive").value.trim(),
+    removal_cleanliness_0_10: $("f_removal").value ? Number($("f_removal").value) : null,
+    material_cost_sqft: $("f_mat_cost").value ? Number($("f_mat_cost").value) : null,
+    print_cost_sqft: $("f_print_cost").value ? Number($("f_print_cost").value) : null,
+    notes: $("f_notes").value.trim(),
+  };
+  return payload;
+}
+
+async function adminSave(){
+  const tok = await requireAdminToken();
+  const payload = collectEditPayload();
+  if (!payload.id) throw new Error("ID is required.");
+
+  const method = CURRENT_EDIT_ID ? "PUT" : "POST";
+  const res = await fetch("/api/materials", {
+    method,
+    headers: { "content-type":"application/json", "x-admin-token": tok },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data?.error || `Save failed (${res.status})`);
+  await loadMaterials();
+  await refreshAdmin();
+  closeDialog("editDialog");
+}
+
+async function adminDelete(id){
+  const tok = await requireAdminToken();
+  const res = await fetch(`/api/materials?id=${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: { "x-admin-token": tok }
+  });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data?.error || `Delete failed (${res.status})`);
+  await loadMaterials();
+}
+
+if (adminBtn){
+  adminBtn.addEventListener("click", openAdmin);
+}
+$("closeAdminBtn")?.addEventListener("click", ()=>closeDialog("adminDialog"));
+$("addMatBtn")?.addEventListener("click", ()=>openEdit(null));
+$("adminSearch")?.addEventListener("input", refreshAdmin);
+$("saveMatBtn")?.addEventListener("click", ()=>adminSave().catch(e=>alert(e.message)));
+$("cancelEditBtn")?.addEventListener("click", ()=>closeDialog("editDialog"));
+
+$("run").addEventListener("click", ()=>runRecommendations(false));
+$("showAll").addEventListener("click", ()=>runRecommendations(true));
+
+loadMaterials();
+</script>
+</body>
+</html>
